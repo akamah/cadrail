@@ -1,6 +1,6 @@
-import Main = require("./Main");
+import { Main } from "./Main";
 
 window.addEventListener("load", function() {
     const main = new Main();
-    main.render();
+    main.setup();
 }, false);
