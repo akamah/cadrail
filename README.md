@@ -3,6 +3,12 @@
 `$ npm install` からの
 `$ npm run build` で頼む
 
+## 開発に関して
+Blenderでモデルを作成しており，自動的にBlenderファイルからThree.jsの形式にエクスポートしたいため，スクリプトを組んでいる．
+そのため，先に新しめのBlenderを入れて，`blender`と叩けばBlenderが立ち上がるようにパスとかエイリアスとかしてください．
+それと，io_threeも入れといてください．
+
+
 # 開発メモ
 
 ## Three.jsおよび型定義のインストール
