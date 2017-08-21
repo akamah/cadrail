@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "@types/three": "^0.84.15",
+        "typescript": "^2.1.4",
         "three": "^0.86.0"
     },
     "devDependencies": {
