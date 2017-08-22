@@ -25,7 +25,7 @@ export class RailView {
         const h = radius;
         
         this.camera = new THREE.OrthographicCamera(-w, w, h, -h);
-        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+//        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
     }
     
@@ -36,7 +36,7 @@ export class RailView {
 
         loader.load('./build/assets/' + path, (geometry, materials) => {
             var rail = new THREE.Mesh(geometry, material);
-            this.scene.add(rail);
+          this.scene.add(rail);
         });
     }
 
