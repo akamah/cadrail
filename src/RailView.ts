@@ -1,4 +1,9 @@
-import * as THREE from "three";
+import * as THREE from 'three';
+import 'three-examples/controls/OrbitControls';
+
+
+import { Rail } from './Rail';
+import { Layout, LayoutObserver } from './Layout';
 
 export class RailView {
     private renderer: THREE.WebGLRenderer;
@@ -19,14 +24,17 @@ export class RailView {
     }
     
     private initCamera() {
-        const radius = 300;
+        const radius = 1000;
         const ratio = window.innerWidth / window.innerHeight;
         const w = radius * ratio;
         const h = radius;
         
-        this.camera = new THREE.OrthographicCamera(-w, w, h, -h);
-//        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 10, 5000);
+        this.camera.position.z = 2000;
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.addEventListener('change', this.render);
 
+        console.log(this.controls);
     }
     
     private load(path: string, color: number) {
@@ -61,18 +69,15 @@ export class RailView {
         this.load('autopoint_ab.json', blue);
         this.load('autopoint_bc.json', gray);
         this.load('autopoint_abc.json', blue);
-        
+        this.load('autopoint_decoration.json', blue);        
+
     }
     
     public render() {
         window.requestAnimationFrame(this.render.bind(this));
         
-       /*  if (this.rail != null) {
-            this.rail.rotation.x += 0.01;
-            this.rail.rotation.z += 0.005;
-
-        } */
-
+        this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
     }
 }
+
