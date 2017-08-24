@@ -4,6 +4,7 @@ import 'three-examples/controls/OrbitControls';
 
 import { Rail, StraightRail } from './rail/Rail';
 import { Layout, LayoutObserver } from './rail/Layout';
+import { ModelManager} from './model/ModelManager';
 
 export class RailView implements LayoutObserver {
     private renderer: THREE.WebGLRenderer;
@@ -48,14 +49,9 @@ export class RailView implements LayoutObserver {
     }
     
     private load(path: string, color: number) {
-        var loader = new THREE.JSONLoader();
+        var rail = ModelManager.get(path);
 
-        var material = new THREE.MeshLambertMaterial({ color: color});
-
-        loader.load('./build/assets/' + path, (geometry, materials) => {
-            var rail = new THREE.Mesh(geometry, material);
-          this.scene.add(rail);
-        });
+        this.scene.add(rail);
     }
 
     private initScene() {
@@ -73,13 +69,13 @@ export class RailView implements LayoutObserver {
         const blue = 0x3399FF;
         const gray = 0x666666;
 
-        this.load('autopoint_a.json', blue);
-        this.load('autopoint_b.json', gray);
-        this.load('autopoint_c.json', gray);
-        this.load('autopoint_ab.json', blue);
-        this.load('autopoint_bc.json', gray);
-        this.load('autopoint_abc.json', blue);
-        this.load('autopoint_decoration.json', blue);        
+        this.load('autopoint_a', blue);
+        this.load('autopoint_b', gray);
+        this.load('autopoint_c', gray);
+        this.load('autopoint_ab', blue);
+        this.load('autopoint_bc', gray);
+        this.load('autopoint_abc', blue);
+        this.load('autopoint_decoration', blue);        
 
     }
     
@@ -88,8 +84,8 @@ export class RailView implements LayoutObserver {
     }
 
     private onKeyDown(event: KeyboardEvent) {
-        event.stopPropagation();
-        event.preventDefault();        
+//        event.stopPropagation();
+//        event.preventDefault();        
         console.log('key pressed');
 
         this.layout.add(new StraightRail());
