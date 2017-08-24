@@ -23,7 +23,7 @@ export class ModelManager {
         return this.instance_;
     }
 
-    public static get(name: string): THREE.Mesh {
+    public static create(name: string): THREE.Mesh {
         const geom = this.instance().geometries[name];
 
         if (!geom) {

@@ -5,13 +5,28 @@ import { End } from '../core/End'
 
 // レールはどんどん継承して作っていくことにした
 export abstract class Rail {
-    abstract ends(): End[];
+    constructor() {
+
+    }
+
+    protected abstract localEnds(): End[];
 }
 
 export class StraightRail extends Rail {
-    public ends(): End[] {
-        return [End.minus(Point.zero(), Dir.South),
-                End.minus(Point.of(PValue.of(4), PValue.zero()), Dir.North)];
+    constructor(
+        public readonly position: Point,
+        public readonly dir: Dir,
+        public readonly inverse: Boolean,
+        public readonly converse: Boolean
+    ) {
+        super();
+    }
+
+    protected localEnds(): End[] {
+        return [
+            End.minus(Point.zero(), Dir.South),
+            End.minus(Point.of(PValue.of(4), PValue.zero()), Dir.North)
+        ];
     }
 }
 

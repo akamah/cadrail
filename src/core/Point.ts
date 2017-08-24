@@ -1,3 +1,4 @@
+import { Vector3 } from 'three'
 import { PValue } from './PValue'
 
 export class Point {
@@ -10,6 +11,14 @@ export class Point {
 
     public static of(f: PValue, r: PValue, u = 0) {
         return new Point(f, r, u);
+    }
+
+    public toVector3(): Vector3 {
+        return new Vector3(
+            this.front.toNumber(),
+            this.up * 66.0 / 4.0
+            -this.right.toNumber(),
+        )
     }
 }
 

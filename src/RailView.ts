@@ -2,9 +2,14 @@ import * as THREE from 'three';
 import 'three-examples/controls/OrbitControls';
 
 
+import { PValue } from './core/PValue';
+import { Point } from './core/Point';
+import { Dir } from './core/Dir';
 import { Rail, StraightRail } from './rail/Rail';
 import { Layout, LayoutObserver } from './rail/Layout';
-import { ModelManager} from './model/ModelManager';
+import { ModelManager } from './model/ModelManager';
+import { StraightModel } from './model/Model';
+
 
 export class RailView implements LayoutObserver {
     private renderer: THREE.WebGLRenderer;
@@ -42,14 +47,13 @@ export class RailView implements LayoutObserver {
         this.camera.position.z = 2000;
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
-        this.controls.addEventListener('change', this.render);
 
         // need to set `controls.target` correctly 
         // when adding rails in order to maintain appropriate viewpoint.
     }
     
     private load(path: string, color: number) {
-        var rail = ModelManager.get(path);
+        var rail = ModelManager.create(path);
 
         this.scene.add(rail);
     }
@@ -83,18 +87,25 @@ export class RailView implements LayoutObserver {
         this.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
 
+    private x = 0;
+
     private onKeyDown(event: KeyboardEvent) {
 //        event.stopPropagation();
 //        event.preventDefault();        
         console.log('key pressed');
 
-        this.layout.add(new StraightRail());
+        const r = new StraightRail(
+            new Point(new PValue(this.x), PValue.zero(), 0),
+            Dir.North,
+            false, false);
+
+        this.layout.add(r);
+        this.x += 4;
     }
 
     public render() {
         window.requestAnimationFrame(this.render.bind(this));
         
-        this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -102,6 +113,9 @@ export class RailView implements LayoutObserver {
     // so we need to add a rail model to the scene
     public railAdded(layout: Layout, rail: Rail) {
         console.log('rail added');
+
+        const m = new StraightModel(rail as StraightRail);
+        m.addToScene(this.scene);
     }
 
     public railRemoved(layout: Layout, rail: Rail) {
