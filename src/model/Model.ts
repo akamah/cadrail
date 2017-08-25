@@ -20,7 +20,7 @@ export class StraightModel extends Model {
         super();
 
         const p = rail.position.toVector3();
-        this.model.position.set(p.x, p.y, p.z);
+        this.model.position.copy(p);
         this.model.rotateX(rail.converse ? 180 : 0);
     }
 

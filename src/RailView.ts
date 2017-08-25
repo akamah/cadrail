@@ -44,7 +44,7 @@ export class RailView implements LayoutObserver {
         const h = radius;
         
         this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 10, 5000);
-        this.camera.position.z = 2000;
+        this.camera.position.set(-200, 200, 200);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
 
@@ -94,13 +94,15 @@ export class RailView implements LayoutObserver {
 //        event.preventDefault();        
         console.log('key pressed');
 
-        const r = new StraightRail(
-            new Point(new PValue(this.x), PValue.zero(), 0),
-            Dir.North,
-            false, false);
+        if (event.keyCode == 38) {
+            const r = new StraightRail(
+                new Point(new PValue(this.x), PValue.zero(), 0),
+                Dir.North,
+                false, false);
 
-        this.layout.add(r);
-        this.x += 4;
+            this.layout.add(r);
+            this.x += 4;
+        }
     }
 
     public render() {

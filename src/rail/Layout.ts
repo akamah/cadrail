@@ -1,4 +1,7 @@
+
+import { Dir, End, Point, Pole, PValue } from '../core';
 import { Rail } from './Rail';
+
 
 export interface LayoutObserver {
     railAdded(Layout, Rail);
@@ -7,12 +10,15 @@ export interface LayoutObserver {
 
 
 export class Layout {
-    private observer_: LayoutObserver;
-    private rails: Set<Rail>;
+    private observer_: LayoutObserver = null;
+    private rails_: Set<Rail> = new Set<Rail>();
+    private openEnds_ : Set<End>;
 
     constructor() {
-        this.observer_ = null;
-        this.rails = new Set<Rail>();
+        this.openEnds_ = new Set<End>([
+            new End(Point.zero(), Dir.North, Pole.Plus),
+            new End(Point.zero(), Dir.South, Pole.Minus)
+        ])
     }
 
     get observer(): LayoutObserver {
@@ -21,6 +27,14 @@ export class Layout {
 
     set observer(ob: LayoutObserver) {
         this.observer_ = ob;
+    }
+
+    get rails(): Set<Rail> {
+        return this.rails_;
+    }
+
+    get openEnds(): Set<End> {
+        return this.openEnds_;
     }
 
     private notifyAdd(rail: Rail) {
