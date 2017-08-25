@@ -20,4 +20,14 @@ export class End {
     public static minus(point: Point, dir: Dir) {
         return new this(point, dir, Pole.Minus);
     }
+
+    public match(other: End): Boolean {
+        return this.point == other.point &&
+            Dir.match(this.dir, other.dir) &&
+            Pole.match(this.pole, other.pole);
+    }
+
+    // public translateBy(other: End): End {
+
+    // }
 }
