@@ -1,5 +1,5 @@
 
-import { Dir, End, Point, Pole, PValue } from '../core';
+import { Dir, End, Point, Pole, Rot } from '../core';
 import { Rail } from './Rail';
 
 

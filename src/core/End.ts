@@ -26,8 +26,4 @@ export class End {
             Dir.match(this.dir, other.dir) &&
             Pole.match(this.pole, other.pole);
     }
-
-    // public translateBy(other: End): End {
-
-    // }
 }
