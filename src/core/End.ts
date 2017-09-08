@@ -26,4 +26,14 @@ export class End {
             Dir.match(this.dir, other.dir) &&
             Pole.match(this.pole, other.pole);
     }
+
+    public transformBy(global: End): End {
+        const rotated = this.point.rotateBy(global.dir);
+        const transformed = this.point.transformBy(global.point);
+
+        return End.of(
+            transformed,
+            Dir.translateBy(this.dir, global.dir),
+            Pole.translateBy(this.pole, global.pole));
+    }
 }

@@ -1,6 +1,7 @@
 import { Point } from '../core/Point'
 import { Dir } from '../core/Dir'
 import { End } from '../core/End'
+import { Rot } from '../core/Rot'
 
 
 // # レールの種類ごとに共通した特徴
@@ -34,8 +35,7 @@ export class StraightRail extends Rail {
     protected localEnds(): End[] {
         return [
             End.minus(Point.zero(), Dir.South),
-            End.minus(Point.of(PValue.of(4), PValue.zero()), Dir.North)
+            End.minus(Point.of(Rot.of(4)), Dir.North)
         ];
     }
 }
-

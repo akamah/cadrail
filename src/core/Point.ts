@@ -12,12 +12,12 @@ export class Point {
         return new Point(Rot.zero(), Rot.zero(), 0);
     }
 
-    public static of(f: Rot, r: Rot, u = 0) {
-        return new Point(f, r, u);
+    public static of(s: Rot, d = Rot.zero(), u = 0) {
+        return new Point(s, d, u);
     }
 
     // blenderの世界からthree.jsの世界のベクトルに移す
-    // なので回転している
+    // なのでx軸周りで回転している
     public toVector3(): Vector3 {
         const SINGLE = 54;
         const DOUBLE = 60;
@@ -40,16 +40,24 @@ export class Point {
             this.up + other.up);
     }
 
-    public negate(): Point {
+    public neg(): Point {
         return new Point(
-            this.single.negate(),
-            this.double.negate(),
+            this.single.neg(),
+            this.double.neg(),
             -this.up
         )
     }
 
-    public transformBy(offset: Point): Point {
-        return this.add(offset);
+    public transformBy(global: Point): Point {
+        return this.add(global);
+    }
+
+    public rotateBy(dir: Dir): Point {
+        return new Point(
+            this.single.mul(Dir.toRot(dir)),
+            this.double.mul(Dir.toRot(dir)),
+            this.up
+        )
     }
 }
 

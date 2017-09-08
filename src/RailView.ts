@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import 'three-examples/controls/OrbitControls';
 
 
-import { PValue } from './core/PValue';
 import { Point } from './core/Point';
 import { Dir } from './core/Dir';
+import { Rot } from './core/Rot';
 import { Rail, StraightRail } from './rail/Rail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
@@ -61,11 +61,11 @@ export class RailView implements LayoutObserver {
     private initScene() {
         this.scene = new THREE.Scene();
             
-        const light = new THREE.PointLight();
+        const light = new THREE.DirectionalLight(0xFFFFFF);
         light.position.set(200, 400, -100);
         
         this.scene.add(light);
-        this.scene.add(new THREE.AmbientLight());
+        this.scene.add(new THREE.AmbientLight(0xAAAAAA));
         
         const axisHelper = new THREE.AxisHelper(50);
         this.scene.add(axisHelper);
@@ -96,7 +96,7 @@ export class RailView implements LayoutObserver {
 
         if (event.keyCode == 38) {
             const r = new StraightRail(
-                new Point(new PValue(this.x), PValue.zero(), 0),
+                Point.of(new Rot(this.x)),
                 Dir.North,
                 false, false);
 

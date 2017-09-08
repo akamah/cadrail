@@ -1,6 +1,6 @@
 // expresses a point which can be a point of the coordinate system.
 // we call this Rot45 coordinate.
-// the values has no unit.
+// the values have no unit.
 export class Rot {
     constructor(public readonly a: number, public readonly b = 0, 
         public readonly c = 0, public readonly d = 0) {
@@ -26,10 +26,19 @@ export class Rot {
     }
 
     public sub(that: Rot): Rot {
-        return this.add(that.negate());
+        return this.add(that.neg());
     }
 
-    public negate(): Rot {
+    public neg(): Rot {
         return new Rot(-this.a, -this.b, -this.c, -this.d);
+    }
+
+    public mul(that: Rot): Rot {
+        return new Rot(
+            this.a*that.a - this.b*that.d - this.c*that.c - this.d*that.b,
+            this.a*that.b + this.b*that.a - this.c*that.d - this.d*that.c,
+            this.a*that.c + this.b*that.b + this.c*that.a - this.d*that.d,
+            this.a*that.d + this.b*that.c + this.c*that.b + this.d*that.a,
+        );
     }
 }
