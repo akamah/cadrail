@@ -12,11 +12,9 @@ import { Rot } from '../core/Rot'
 // * 端点から端点に移動する時のベクトル関数、導関数
 // * 
 
-
 // レールはどんどん継承して作っていくことにした
 export abstract class Rail {
     constructor() {
-
     }
 
     protected abstract localEnds(): End[];
@@ -35,7 +33,7 @@ export class StraightRail extends Rail {
     protected localEnds(): End[] {
         return [
             End.minus(Point.zero(), Dir.South),
-            End.minus(Point.of(Rot.of(4)), Dir.North)
+            End.plus(Point.of(Rot.of(4)), Dir.North)
         ];
     }
 }
