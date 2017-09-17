@@ -1,5 +1,4 @@
-
-import { Dir, End, Point, Pole, Rot } from '../core';
+import { Dir, End, Point, Pole, Rot } from 'librail';
 import { Rail } from './Rail';
 
 

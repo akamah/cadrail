@@ -19,10 +19,14 @@ export class StraightModel extends Model {
     constructor(private rail: StraightRail) {
         super();
 
+        // SUPER STUB!!
+        this.model.position.x = rail.position.single.a * 54;
+/* 
         const p = rail.position.toVector3();
         this.model.position.copy(p);
         this.model.rotateX(rail.converse ? 180 : 0);
-    }
+ */ 
+   }
 
     public addToScene(scene: THREE.Scene) {
         scene.add(this.model);

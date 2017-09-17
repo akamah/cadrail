@@ -1,7 +1,4 @@
-import { Point } from '../core/Point'
-import { Dir } from '../core/Dir'
-import { End } from '../core/End'
-import { Rot } from '../core/Rot'
+import { Point, Dir, End, Rot } from 'librail'
 
 
 // # レールの種類ごとに共通した特徴

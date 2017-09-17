@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "@types/three": "^0.84.15",
+        "librail": "git+https://git@github.com/akamah/librail.git",
         "three": "^0.86.0",
         "typescript": "^2.1.4"
     },

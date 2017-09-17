@@ -2,9 +2,7 @@ import * as THREE from 'three';
 import 'three-examples/controls/OrbitControls';
 
 
-import { Point } from './core/Point';
-import { Dir } from './core/Dir';
-import { Rot } from './core/Rot';
+import { Point, Dir, Rot } from 'librail';
 import { Rail, StraightRail } from './rail/Rail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
