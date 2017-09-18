@@ -88,8 +88,8 @@ export class RailView implements LayoutObserver {
     private x = 0;
 
     private onKeyDown(event: KeyboardEvent) {
-//        event.stopPropagation();
-//        event.preventDefault();        
+        event.stopPropagation();
+        event.preventDefault();        
         console.log('key pressed');
 
         if (event.keyCode == 38) {
