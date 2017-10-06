@@ -28,8 +28,9 @@ export class RailView implements LayoutObserver {
     }
     
     private initRenderer() {
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer.setPixelRatio(window.devicePixelRatio || 1);
+        this.renderer.setSize(800, 600);
         document.body.appendChild(this.renderer.domElement);
         this.renderer.domElement.setAttribute('tabindex', '0');
         this.renderer.domElement.focus();
