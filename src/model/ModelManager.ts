@@ -23,14 +23,14 @@ export class ModelManager {
         return this.instance_;
     }
 
-    public static create(name: string): THREE.Mesh {
+    public static create(name: string, color = 0x5588FF): THREE.Mesh {
         const geom = this.instance().geometries[name];
 
         if (!geom) {
             console.error("geometry ", name, " not found");
         }
 
-        const mat = new THREE.MeshLambertMaterial( { color: 0x5588FF });
+        const mat = new THREE.MeshLambertMaterial( { color: color });
 
         return new THREE.Mesh(geom, mat);
     }

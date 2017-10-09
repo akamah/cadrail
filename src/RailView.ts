@@ -22,9 +22,7 @@ export class RailView implements LayoutObserver {
         this.initCamera();
         this.initScene();
         this.initHandler();
-
-        this.layout = new Layout();
-        this.layout.observer = this;
+        this.initLayout();
     }
     
     private initRenderer() {
@@ -51,10 +49,11 @@ export class RailView implements LayoutObserver {
         // when adding rails in order to maintain appropriate viewpoint.
     }
     
-    private load(path: string, color: number) {
-        var rail = ModelManager.create(path);
+    private load(path: string, color: number): THREE.Mesh {
+        var rail = ModelManager.create(path, color);
 
         this.scene.add(rail);
+        return rail;
     }
 
     private initScene() {
@@ -68,22 +67,29 @@ export class RailView implements LayoutObserver {
         
         const axisHelper = new THREE.AxisHelper(50);
         this.scene.add(axisHelper);
-        
-        const blue = 0x3399FF;
-        const gray = 0x666666;
-
-        this.load('autopoint_a', blue);
-        this.load('autopoint_b', gray);
-        this.load('autopoint_c', gray);
-        this.load('autopoint_ab', blue);
-        this.load('autopoint_bc', gray);
-        this.load('autopoint_abc', blue);
-        this.load('autopoint_decoration', blue);        
-
     }
     
     private initHandler() {
         this.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false);
+    }
+
+    private initLayout() {
+        this.layout = new Layout();
+        this.layout.observer = this;
+
+        // load initial layout
+
+        const blue = 0x3399FF;
+        const gray = 0x666666;
+        const yellow = 0xaaaa33;
+
+        var c = this.load('curve_8', blue);
+        c.position.z = -60;
+
+        this.load('straight_2', blue);
+        var p = this.load('pier', yellow);
+        p.position.x = 108 - 7.5;
+        
     }
 
     private x = 0;
@@ -91,7 +97,6 @@ export class RailView implements LayoutObserver {
     private onKeyDown(event: KeyboardEvent) {
         event.stopPropagation();
         event.preventDefault();        
-        console.log('key pressed');
 
         if (event.keyCode == 38) {
             const r = new StraightRail(
@@ -113,10 +118,11 @@ export class RailView implements LayoutObserver {
     // a rail is added to the layout
     // so we need to add a rail model to the scene
     public railAdded(layout: Layout, rail: Rail) {
-        console.log('rail added');
-
-        const m = new StraightModel(rail as StraightRail);
-        m.addToScene(this.scene);
+        if (rail instanceof StraightRail) {
+            const m = new StraightModel(rail as StraightRail);
+            m.addToScene(this.scene);   
+        } else {
+        }            
     }
 
     public railRemoved(layout: Layout, rail: Rail) {
