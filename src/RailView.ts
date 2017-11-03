@@ -10,6 +10,9 @@ import { StraightModel } from './model/Model';
 
 
 export class RailView implements LayoutObserver {
+    readonly WIDTH = 800;
+    readonly HEIGHT= 600;
+
     private renderer: THREE.WebGLRenderer;
     private scene:    THREE.Scene;
     private camera:   THREE.Camera;
@@ -28,7 +31,7 @@ export class RailView implements LayoutObserver {
     private initRenderer() {
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setPixelRatio(window.devicePixelRatio || 1);
-        this.renderer.setSize(800, 600);
+        this.renderer.setSize(this.WIDTH, this.HEIGHT);
         document.body.appendChild(this.renderer.domElement);
         this.renderer.domElement.setAttribute('tabindex', '0');
         this.renderer.domElement.focus();
@@ -36,12 +39,12 @@ export class RailView implements LayoutObserver {
     
     private initCamera() {
         const radius = 1000;
-        const ratio = window.innerWidth / window.innerHeight;
+        const ratio = this.WIDTH / this.HEIGHT;
         const w = radius * ratio;
         const h = radius;
         
         this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 10, 5000);
-        this.camera.position.set(-200, 200, 200);
+        this.camera.position.set(0, 200, 0);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
 
@@ -83,13 +86,28 @@ export class RailView implements LayoutObserver {
         const gray = 0x666666;
         const yellow = 0xaaaa33;
 
-        var c = this.load('curve_8', blue);
-        c.position.z = -60;
+        const p = Math.SQRT1_2;
+        const q = 1 - p;
 
-        this.load('straight_2', blue);
-        var p = this.load('pier', yellow);
-        p.position.x = 108 - 7.5;
+        const l = 216;
+
+        {
+            var c = this.load('curve_8', blue);
+        }
+        {
+            var c = this.load('straight_1', blue);
+        }
+
+        {
+            var pier = this.load('pier', yellow);
+            pier.position.set(l * p - 7.5 * p, 0, -(l * q - 7.5 * p));
+            pier.rotateY(1 * Math.PI / 4)
+        }
         
+        {
+            var pier = this.load('pier', yellow);
+            pier.position.set(l - 7.5, 0, 0);
+        }
     }
 
     private x = 0;
