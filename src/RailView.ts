@@ -95,18 +95,18 @@ export class RailView implements LayoutObserver {
             var c = this.load('curve_8', blue);
         }
         {
-            var c = this.load('straight_1', blue);
+            var c = this.load('curve_8', blue);
+            c.position.set((3 * p - 2) * l, 0, q * l)
+            c.rotateY(Math.PI / 4);
         }
-
         {
             var pier = this.load('pier', yellow);
-            pier.position.set(l * p - 7.5 * p, 0, -(l * q - 7.5 * p));
-            pier.rotateY(1 * Math.PI / 4)
+            pier.position.set(7.5, 0, 0);
         }
         
         {
             var pier = this.load('pier', yellow);
-            pier.position.set(l - 7.5, 0, 0);
+            pier.position.set(2 * l - 7.5, 0, 0);
         }
     }
 
