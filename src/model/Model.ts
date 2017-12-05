@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { StraightRail } from '../rail/Rail';
+import { Rail } from 'librail';
 import { ModelManager } from './ModelManager';
 
 // 生のオブジェクトをビューが扱う代わりに
@@ -16,11 +16,11 @@ export class Model {
 export class StraightModel extends Model {
     private model = ModelManager.create('straight_1');
 
-    constructor(private rail: StraightRail) {
+    constructor(private rail: Rail) {
         super();
 
         // SUPER STUB!!
-        this.model.position.x = rail.position.single.a * 54;
+        this.model.position.x = rail.instance.origin.point.single.a * 54;
 /* 
         const p = rail.position.toVector3();
         this.model.position.copy(p);

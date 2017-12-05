@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import 'three-examples/controls/OrbitControls';
 
 
-import { Point, Dir, Rot } from 'librail';
-import { Rail, StraightRail } from './rail/Rail';
+import { End, Pole, Point, Dir, Rot, Rail, Straight, Flip } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
 import { StraightModel } from './model/Model';
@@ -43,7 +42,7 @@ export class RailView implements LayoutObserver {
         const w = radius * ratio;
         const h = radius;
         
-        this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 10, 5000);
+        this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 0, 5000);
         this.camera.position.set(0, 200, 0);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
@@ -95,18 +94,18 @@ export class RailView implements LayoutObserver {
             var c = this.load('curve_8', blue);
         }
         {
-            var c = this.load('curve_8', blue);
-            c.position.set((3 * p - 2) * l, 0, q * l)
-            c.rotateY(Math.PI / 4);
+            var c = this.load('slope', blue);
+            c.rotateX(Math.PI);
+            c.position.setY(66);
         }
         {
+            this.load('pier', yellow).position.setY(0);
+            this.load('pier', yellow).position.setY(-66);
+            this.load('pier', yellow).position.setX(2*l);
+            this.load('pier', yellow).position.set(2*l, -66, 0);
             var pier = this.load('pier', yellow);
-            pier.position.set(7.5, 0, 0);
-        }
-        
-        {
-            var pier = this.load('pier', yellow);
-            pier.position.set(2 * l - 7.5, 0, 0);
+            pier.position.set(l*p, -66, -l*q);
+            pier.rotateY(Math.PI / 4);
         }
     }
 
@@ -117,10 +116,10 @@ export class RailView implements LayoutObserver {
         event.preventDefault();        
 
         if (event.keyCode == 38) {
-            const r = new StraightRail(
-                Point.of(new Rot(this.x)),
-                Dir.North,
-                false, false);
+            const r = new Rail(
+                Straight, 0, 
+                End.of(Point.of(new Rot(this.x)), Dir.North, Pole.Plus),
+                Flip.No);
 
             this.layout.add(r);
             this.x += 4;
@@ -136,8 +135,8 @@ export class RailView implements LayoutObserver {
     // a rail is added to the layout
     // so we need to add a rail model to the scene
     public railAdded(layout: Layout, rail: Rail) {
-        if (rail instanceof StraightRail) {
-            const m = new StraightModel(rail as StraightRail);
+        if (rail.factory === Straight) {
+            const m = new StraightModel(rail);
             m.addToScene(this.scene);   
         } else {
         }            

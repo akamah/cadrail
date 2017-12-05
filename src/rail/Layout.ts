@@ -1,5 +1,4 @@
-import { Dir, End, Point, Pole, Rot } from 'librail';
-import { Rail } from './Rail';
+import { Dir, End, Point, Pole, Rot, Rail } from 'librail';
 
 
 export interface LayoutObserver {
