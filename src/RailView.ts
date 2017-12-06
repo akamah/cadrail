@@ -118,7 +118,7 @@ export class RailView implements LayoutObserver {
         if (event.keyCode == 38) {
             const r = new Rail(
                 Straight, 0, 
-                End.of(Point.of(new Rot(this.x)), Dir.North, Pole.Plus),
+                End.of(Point.of(new Rot(this.x)), Dir.East, Pole.Plus),
                 Flip.No);
 
             this.layout.add(r);
@@ -135,6 +135,7 @@ export class RailView implements LayoutObserver {
     // a rail is added to the layout
     // so we need to add a rail model to the scene
     public railAdded(layout: Layout, rail: Rail) {
+        console.log(rail.ends());
         if (rail.factory === Straight) {
             const m = new StraightModel(rail);
             m.addToScene(this.scene);   
