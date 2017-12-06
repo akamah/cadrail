@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import 'three-examples/controls/OrbitControls';
 
 
-import { End, Pole, Point, Dir, Rot, Rail, Straight, Flip } from 'librail';
+import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
 import { StraightModel } from './model/Model';
@@ -109,20 +109,28 @@ export class RailView implements LayoutObserver {
         }
     }
 
-    private x = 0;
+    private handle = End.of(Point.zero(), Dir.East, Pole.Plus);
 
     private onKeyDown(event: KeyboardEvent) {
         event.stopPropagation();
         event.preventDefault();        
 
-        if (event.keyCode == 38) {
+        if (event.code === "ArrowUp") {
             const r = new Rail(
                 Straight, 0, 
-                End.of(Point.of(new Rot(this.x)), Dir.East, Pole.Plus),
+                this.handle,
                 Flip.No);
 
             this.layout.add(r);
-            this.x += 4;
+            this.handle = r.ends()[1].opposite();
+        } else if (event.code === "ArrowLeft") {
+            const r = new Rail(
+                Curve, 0, 
+                this.handle,
+                Flip.No);
+
+            this.layout.add(r);
+            this.handle = r.ends()[1].opposite();
         }
     }
 
@@ -139,7 +147,9 @@ export class RailView implements LayoutObserver {
         if (rail.factory === Straight) {
             const m = new StraightModel(rail);
             m.addToScene(this.scene);   
-        } else {
+        } else if (rail.factory === Curve) { // STUB!!!
+            const m = new StraightModel(rail);
+            m.addToScene(this.scene);   
         }            
     }
 
