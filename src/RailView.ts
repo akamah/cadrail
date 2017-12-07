@@ -9,8 +9,8 @@ import { StraightModel, CurveModel, SlopeModel } from './model/Model';
 
 
 export class RailView implements LayoutObserver {
-    readonly WIDTH = 800;
-    readonly HEIGHT= 600;
+    readonly WIDTH = 1024;
+    readonly HEIGHT= 640;
 
     private renderer: THREE.WebGLRenderer;
     private scene:    THREE.Scene;
@@ -108,7 +108,7 @@ export class RailView implements LayoutObserver {
         }
     }
 
-    private handle = End.of(Point.zero(), Dir.East, Pole.Minus);
+    private handle = End.of(Point.zero(), Dir.East, Pole.Plus);
 
     private onKeyDown(event: KeyboardEvent) {
         event.stopPropagation();
