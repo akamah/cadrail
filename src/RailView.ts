@@ -46,6 +46,7 @@ export class RailView implements LayoutObserver {
         this.camera.position.set(0, 5000, 0);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
+        this.controls.maxPolarAngle = Math.PI / 2;
 
         // need to set `controls.target` correctly 
         // when adding rails in order to maintain appropriate viewpoint.
@@ -60,12 +61,21 @@ export class RailView implements LayoutObserver {
 
     private initScene() {
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xFFFFFF);
             
         const light = new THREE.DirectionalLight(0xFFFFFF);
         light.position.set(200, 400, -100);
         
         this.scene.add(light);
         this.scene.add(new THREE.AmbientLight(0xAAAAAA));
+
+        {
+            var geometry = new THREE.PlaneGeometry(10000, 10000);
+            var material = new THREE.MeshBasicMaterial( {color: 0x33FF33 } );
+            var plane = new THREE.Mesh( geometry, material );
+            plane.rotateX(-Math.PI / 2)
+            this.scene.add( plane );
+        }
         
         if (0) {
             const axisHelper = new THREE.AxisHelper(50);
@@ -107,11 +117,7 @@ export class RailView implements LayoutObserver {
     }
 
     private onKeyDown(event: KeyboardEvent) {
-        event.stopPropagation();
-        event.preventDefault();        
-
         let handle = this.layout.topOpenEnd().opposite();
-        console.log(handle.toString());
         if (event.code === "ArrowUp") {
             const r = new Rail(
                 Straight, 0, 
@@ -146,13 +152,18 @@ export class RailView implements LayoutObserver {
                 handle,
                 Flip.Yes);
 
-        this.layout.add(r);
+            this.layout.add(r);
+        } else {
+            return;
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
     }
-}
 
     public render() {
         window.requestAnimationFrame(this.render.bind(this));
-        
+
         this.renderer.render(this.scene, this.camera);
     }
 
