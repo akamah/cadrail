@@ -82,79 +82,71 @@ export class RailView implements LayoutObserver {
         this.layout.observer = this;
 
 
-        if (0) {
-        // load initial layout
-        const blue = 0x3399FF;
-        const gray = 0x666666;
-        const yellow = 0xaaaa33;
+        if (1) {
+            // load initial layout
+            const blue = 0x3399FF;
+            const gray = 0x666666;
+            const yellow = 0xaaaa33;
 
-        const p = Math.SQRT1_2;
-        const q = 1 - p;
+            const p = Math.SQRT1_2;
+            const q = 1 - p;
+            const l = 216;
 
-        const l = 216;
+//            this.load('curve_8', blue);
+//            var c = this.load('slope', blue);
+//            c.rotateX(Math.PI);
+//            c.position.setY(66);
 
-            this.load('curve_8', blue);
-            var c = this.load('slope', blue);
-            c.rotateX(Math.PI);
-            c.position.setY(66);
+            var c = this.load('pier', yellow);
+            var d = this.load('pier', yellow);
 
-            this.load('pier', yellow).position.setY(0);
-            this.load('pier', yellow).position.setY(-66);
-            this.load('pier', yellow).position.setX(2*l);
-            this.load('pier', yellow).position.set(2*l, -66, 0);
-            var pier = this.load('pier', yellow);
-            pier.position.set(l*p, -66, -l*q);
-            pier.rotateY(Math.PI / 4);
+            c.position.set(3*l*p, 0, -3*l*q);
+            d.position.set(2*l, 0, -l);
+            c.rotateY(Math.PI / 4);
         }
     }
-
-    private handle = End.of(Point.zero(), Dir.East, Pole.Plus);
 
     private onKeyDown(event: KeyboardEvent) {
         event.stopPropagation();
         event.preventDefault();        
 
+        let handle = this.layout.topOpenEnd().opposite();
+        console.log(handle.toString());
         if (event.code === "ArrowUp") {
             const r = new Rail(
                 Straight, 0, 
-                this.handle,
+                handle,
                 Flip.No);
 
             this.layout.add(r);
-            this.handle = r.ends()[1].opposite();
         } else if (event.code === "ArrowLeft") {
             const r = new Rail(
                 Curve, 0, 
-                this.handle,
+                handle,
                 Flip.No);
 
             this.layout.add(r);
-            this.handle = r.ends()[1].opposite();
         } else if (event.code === "ArrowRight") {
             const r = new Rail(
                 Curve, 0, 
-                this.handle,
+                handle,
                 Flip.Yes);
 
             this.layout.add(r);
-            this.handle = r.ends()[1].opposite();
-
         } else if (event.code === "KeyW") {
             const r = new Rail(
                 Slope, 0, 
-                this.handle,
+                handle,
                 Flip.No);
 
             this.layout.add(r);
-            this.handle = r.ends()[1].opposite();
         } else if (event.code === "KeyS") {
-        const r = new Rail(
-            Slope, 0, 
-            this.handle,
-            Flip.Yes);
+            const r = new Rail(
+                Slope, 0, 
+                handle,
+                Flip.Yes);
 
         this.layout.add(r);
-        this.handle = r.ends()[1].opposite();
     }
 }
 
@@ -168,7 +160,6 @@ export class RailView implements LayoutObserver {
     // so we need to add a rail model to the scene
     // this is ugly glue code
     public railAdded(layout: Layout, rail: Rail) {
-        console.log(rail.ends());
         if (rail.factory === Straight) {
             const m = new StraightModel(rail);
             m.addToScene(this.scene);   
