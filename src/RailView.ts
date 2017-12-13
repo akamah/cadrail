@@ -1,7 +1,12 @@
-import * as THREE from '../typings/three-import'
-// import 'three-examples/controls/OrbitControls';
-// import 'three-examples/effects/OutlineEffect';
+import * as THREE from 'three'
+import 'three-examples/controls/OrbitControls';
 
+interface OutlineEffectParameters {
+    defaultThickness?: number,
+    defaultColor?: THREE.Color,
+    defaultAlpha?: number,
+    defaultKeepAlive?: boolean
+}
 
 import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip, Slope } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
@@ -15,7 +20,6 @@ export class RailView implements LayoutObserver {
     readonly HEIGHT= 900;
 
     private renderer: THREE.WebGLRenderer;
-    private outline:  THREE.OutlineEffect;
     private scene:    THREE.Scene;
     private camera:   THREE.Camera;
     private controls: THREE.OrbitControls;
@@ -40,13 +44,6 @@ export class RailView implements LayoutObserver {
         document.body.appendChild(this.renderer.domElement);
         this.renderer.domElement.setAttribute('tabindex', '0');
         this.renderer.domElement.focus();
-/*
-        this.outline = new THREE.OutlineEffect(this.renderer, {
-            defaultThickness: 10,
-            defaultColor: new THREE.Color( 0x888888 ),
-            defaultAlpha: 0.8,
-            defaultKeepAlive: true        
-        });*/
     }
     
     private initCamera() {
@@ -204,7 +201,7 @@ export class RailView implements LayoutObserver {
     public render() {
         window.requestAnimationFrame(this.render.bind(this));
 
-        this.outline.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera);
     }
 
     // a rail is added to the layout

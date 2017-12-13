@@ -3,5 +3,8 @@
         "target":"es6",
         "module": "commonjs",
         "sourceMap": true
+    },
+    "paths": {
+        "three-examples": ["node_modules/three/examples"]
     }
 }
