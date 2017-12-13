@@ -1,23 +1,28 @@
-import * as THREE from 'three';
-import 'three-examples/controls/OrbitControls';
+import * as THREE from '../typings/three-import'
+// import 'three-examples/controls/OrbitControls';
+// import 'three-examples/effects/OutlineEffect';
 
 
 import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip, Slope } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
-import { StraightModel, CurveModel, SlopeModel } from './model/Model';
+import { Model, StraightModel, CurveModel, SlopeModel } from './model/Model';
+
 
 
 export class RailView implements LayoutObserver {
-    readonly WIDTH = 1024;
-    readonly HEIGHT= 640;
+    readonly WIDTH = 1600;
+    readonly HEIGHT= 900;
 
     private renderer: THREE.WebGLRenderer;
+    private outline:  THREE.OutlineEffect;
     private scene:    THREE.Scene;
     private camera:   THREE.Camera;
     private controls: THREE.OrbitControls;
     
     private layout: Layout;
+
+    private frontier: THREE.Mesh;
 
     constructor() {
         this.initRenderer();
@@ -25,6 +30,7 @@ export class RailView implements LayoutObserver {
         this.initScene();
         this.initHandler();
         this.initLayout();
+        this.initFrontier();
     }
     
     private initRenderer() {
@@ -34,6 +40,13 @@ export class RailView implements LayoutObserver {
         document.body.appendChild(this.renderer.domElement);
         this.renderer.domElement.setAttribute('tabindex', '0');
         this.renderer.domElement.focus();
+/*
+        this.outline = new THREE.OutlineEffect(this.renderer, {
+            defaultThickness: 10,
+            defaultColor: new THREE.Color( 0x888888 ),
+            defaultAlpha: 0.8,
+            defaultKeepAlive: true        
+        });*/
     }
     
     private initCamera() {
@@ -42,11 +55,11 @@ export class RailView implements LayoutObserver {
         const w = radius * ratio;
         const h = radius;
         
-        this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 0, 10000);
+        this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 0, 100000);
         this.camera.position.set(0, 5000, 0);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
-        this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.maxPolarAngle = Math.PI * 87 / 180;
 
         // need to set `controls.target` correctly 
         // when adding rails in order to maintain appropriate viewpoint.
@@ -59,6 +72,24 @@ export class RailView implements LayoutObserver {
         return rail;
     }
 
+    private initFloor() {
+        var geometry = new THREE.PlaneBufferGeometry(10000, 10000);
+        var material = new THREE.MeshBasicMaterial( {color: 0x33FF33 } );
+        var plane = new THREE.Mesh( geometry, material );
+        plane.rotateX(-Math.PI / 2);
+        plane.position.setY(-4);
+        this.scene.add( plane );
+    }
+
+    private initFrontier() {
+        var geometry = new THREE.CylinderBufferGeometry(0, 15, 40, 6, 1);
+        var material = new THREE.MeshLambertMaterial( { color: 0xFFFFFF });
+        this.frontier = new THREE.Mesh(geometry, material);
+        this.updateFrontier(this.layout.topOpenEnd());
+
+        this.scene.add(this.frontier);
+    }
+
     private initScene() {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xFFFFFF);
@@ -69,14 +100,8 @@ export class RailView implements LayoutObserver {
         this.scene.add(light);
         this.scene.add(new THREE.AmbientLight(0xAAAAAA));
 
-        {
-            var geometry = new THREE.PlaneGeometry(10000, 10000);
-            var material = new THREE.MeshBasicMaterial( {color: 0x33FF33 } );
-            var plane = new THREE.Mesh( geometry, material );
-            plane.rotateX(-Math.PI / 2)
-            this.scene.add( plane );
-        }
-        
+        this.initFloor();
+
         if (0) {
             const axisHelper = new THREE.AxisHelper(50);
             this.scene.add(axisHelper);
@@ -87,12 +112,27 @@ export class RailView implements LayoutObserver {
         this.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
 
+    public updateFrontier(f: End) {
+        let vec3 = Model.pointToVec3(f.point);
+        vec3.y += 20;
+        let euler = new THREE.Euler(0, f.dir.dir * Math.PI / 4, Math.PI / 2);
+
+        this.frontier.position.copy(vec3);
+        this.frontier.setRotationFromEuler(euler);
+
+        this.controls.target = vec3;
+        this.controls.update();
+    }
+
+    public topOpenEndChanged(layout: Layout, f: End) {
+        this.updateFrontier(f);
+    }
+
     private initLayout() {
         this.layout = new Layout();
         this.layout.observer = this;
 
-
-        if (1) {
+        if (0) {
             // load initial layout
             const blue = 0x3399FF;
             const gray = 0x666666;
@@ -164,7 +204,7 @@ export class RailView implements LayoutObserver {
     public render() {
         window.requestAnimationFrame(this.render.bind(this));
 
-        this.renderer.render(this.scene, this.camera);
+        this.outline.render(this.scene, this.camera);
     }
 
     // a rail is added to the layout

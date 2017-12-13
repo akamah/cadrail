@@ -17,7 +17,7 @@ export class Model {
     }
 
     // temporary, move to other module
-    public pointToVec3(p: Point): THREE.Vector3 {
+    public static pointToVec3(p: Point): THREE.Vector3 {
         const d = 60;
         const l = 54;
         const h = 66 / 4;
@@ -35,7 +35,7 @@ export class Model {
 
     protected setupMeshWithRail(mesh: THREE.Mesh, rail: Rail) {
         // set position
-        mesh.position.copy(this.pointToVec3(rail.instance.origin.point));
+        mesh.position.copy(Model.pointToVec3(rail.instance.origin.point));
 
         // rotate along Y-axis 
         let rad = Math.PI / 4 * rail.instance.origin.dir.dir;

@@ -7,6 +7,8 @@ export interface LayoutObserver {
 
     pierAdded?(layout: Layout, pier: Pier);
     pierRemoved?(layout: Layout, pier: Pier);
+
+    topOpenEndChanged?(layout: Layout, topOpen: End);
 }
 
 
@@ -35,10 +37,20 @@ export class Layout {
         return this.openEnds[0];
     }
 
+    private notifyTopOpenEndChanged() {
+        if (this.observer) {
+            if (this.observer.topOpenEndChanged) {
+                this.observer.topOpenEndChanged(this, this.topOpenEnd());
+            }
+        }
+    }
+
     public rotateOpenEnd() {
         let e = this.topOpenEnd();
         this.openEnds_.splice(0, 1);
         this.openEnds_.push(e);
+        
+        this.notifyTopOpenEndChanged();
     }
 
     private toggleOpenEnd(end: End) {
@@ -54,11 +66,10 @@ export class Layout {
 
     }
 
-
-
     private notifyAddRail(rail: Rail) {
 //        this.openEnds_.forEach((e, i) => console.log("%d, %s", i, this.openEnds_[i].toString()), this)
         this.observer.railAdded(this, rail);
+        this.notifyTopOpenEndChanged();        
     }
 
     public add(rail: Rail) {
@@ -69,6 +80,7 @@ export class Layout {
 
     private notifyRemoveRail(rail: Rail) {
         this.observer.railRemoved(this, rail);
+        this.notifyTopOpenEndChanged();        
     }
 
     public remove(rail: Rail) {

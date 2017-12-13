@@ -6,16 +6,16 @@
         "build": "webpack"
     },
     "dependencies": {
-        "@types/three": "^0.84.34",
+        "@types/three": "^0.84.35",
         "librail": "../librail",
         "three": "^0.86.0",
         "typescript": "^2.6.2"
     },
     "devDependencies": {
-        "@types/node": "^8.0.54",
+        "@types/node": "^8.0.58",
         "imports-loader": "^0.7.1",
         "ts-loader": "^2.3.7",
         "webpack": "^3.10.0",
-        "webpack-dev-server": "^2.9.5"
+        "webpack-dev-server": "^2.9.7"
     }
 }
