@@ -7,15 +7,12 @@ export interface LayoutObserver {
 
     pierAdded?(layout: Layout, pier: Pier);
     pierRemoved?(layout: Layout, pier: Pier);
-
-    topOpenEndChanged?(layout: Layout, topOpen: End);
 }
 
 
 export class Layout {
     private observer_: LayoutObserver = null;
     private rails_: Set<Rail> = new Set<Rail>();
-    private openEnds_ = [new End(Point.zero(), Dir.West, Pole.Minus)];
 
     get observer(): LayoutObserver {
         return this.observer_;
@@ -29,38 +26,6 @@ export class Layout {
         return this.rails_;
     }
 
-    get openEnds(): Array<End> {
-        return this.openEnds_;
-    }
-
-    public topOpenEnd(): End {
-        return this.openEnds[0];
-    }
-
-    private notifyTopOpenEndChanged() {
-        if (this.observer) {
-            if (this.observer.topOpenEndChanged) {
-                this.observer.topOpenEndChanged(this, this.topOpenEnd());
-            }
-        }
-    }
-
-    public rotateOpenEnd() {
-        let e = this.topOpenEnd();
-        this.openEnds_.splice(0, 1);
-        this.openEnds_.push(e);
-        
-        this.notifyTopOpenEndChanged();
-    }
-
-    private toggleOpenEnd(end: End) {
-        let i = this.openEnds_.findIndex(e => end.match(e));
-        if (i >= 0) {
-            this.openEnds_.splice(i, 1);
-        } else {
-            this.openEnds_.push(end);
-        }
-    }
 
     private addPierForEndIfNeed(end: End) {
 
@@ -69,23 +34,19 @@ export class Layout {
     private notifyAddRail(rail: Rail) {
 //        this.openEnds_.forEach((e, i) => console.log("%d, %s", i, this.openEnds_[i].toString()), this)
         this.observer.railAdded(this, rail);
-        this.notifyTopOpenEndChanged();        
     }
 
     public add(rail: Rail) {
         this.rails.add(rail);
-        rail.ends().forEach(e => this.toggleOpenEnd(e), this);
         this.notifyAddRail(rail);
     }
 
     private notifyRemoveRail(rail: Rail) {
         this.observer.railRemoved(this, rail);
-        this.notifyTopOpenEndChanged();        
     }
 
     public remove(rail: Rail) {
         this.notifyRemoveRail(rail);
-        rail.ends().forEach(e => this.toggleOpenEnd(e), this);
         this.rails.delete(rail);
     }
 }

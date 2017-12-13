@@ -8,14 +8,14 @@ interface OutlineEffectParameters {
     defaultKeepAlive?: boolean
 }
 
-import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip, Slope } from 'librail';
+import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip, Slope, Turnout } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
-import { Model, StraightModel, CurveModel, SlopeModel } from './model/Model';
+import { Model, StraightModel, CurveModel, SlopeModel, TurnoutModel } from './model/Model';
+import { FrontierManager, FrontierManagerObserver } from './rail/FrontierManager';
 
 
-
-export class RailView implements LayoutObserver {
+export class RailView implements LayoutObserver, FrontierManagerObserver  {
     readonly WIDTH = 1600;
     readonly HEIGHT= 900;
 
@@ -25,6 +25,7 @@ export class RailView implements LayoutObserver {
     private controls: THREE.OrbitControls;
     
     private layout: Layout;
+    private frontierManager: FrontierManager;
 
     private frontier: THREE.Mesh;
 
@@ -53,11 +54,13 @@ export class RailView implements LayoutObserver {
         const h = radius;
         
         this.camera = new THREE.OrthographicCamera(-w, w, h, -h, 0, 100000);
-        this.camera.position.set(0, 5000, 0);
+        this.camera.position.set(0, 5000, 1000);
+
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableKeys = false;
         this.controls.maxPolarAngle = Math.PI * 87 / 180;
 
+        this.controls.update();
         // need to set `controls.target` correctly 
         // when adding rails in order to maintain appropriate viewpoint.
     }
@@ -82,7 +85,7 @@ export class RailView implements LayoutObserver {
         var geometry = new THREE.CylinderBufferGeometry(0, 15, 40, 6, 1);
         var material = new THREE.MeshLambertMaterial( { color: 0xFFFFFF });
         this.frontier = new THREE.Mesh(geometry, material);
-        this.updateFrontier(this.layout.topOpenEnd());
+        this.updateFrontier(this.frontierManager.selection);
 
         this.scene.add(this.frontier);
     }
@@ -106,7 +109,7 @@ export class RailView implements LayoutObserver {
     }
     
     private initHandler() {
-        this.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false);
+        window.document.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
 
     public updateFrontier(f: End) {
@@ -121,13 +124,19 @@ export class RailView implements LayoutObserver {
         this.controls.update();
     }
 
-    public topOpenEndChanged(layout: Layout, f: End) {
-        this.updateFrontier(f);
+    public selectionChanged(fm: FrontierManager, f: End) {
+        if (f) {
+            console.log(f.toString());
+            this.updateFrontier(f);
+        }
     }
 
     private initLayout() {
         this.layout = new Layout();
         this.layout.observer = this;
+
+        this.frontierManager = new FrontierManager();
+        this.frontierManager.observer = this;
 
         if (0) {
             // load initial layout
@@ -154,44 +163,57 @@ export class RailView implements LayoutObserver {
     }
 
     private onKeyDown(event: KeyboardEvent) {
-        let handle = this.layout.topOpenEnd().opposite();
+        let handle = this.frontierManager.selection.opposite();
+        var r: Rail;
+
         if (event.code === "ArrowUp") {
-            const r = new Rail(
+            r = new Rail(
                 Straight, 0, 
                 handle,
                 Flip.No);
-
-            this.layout.add(r);
         } else if (event.code === "ArrowLeft") {
-            const r = new Rail(
+            r = new Rail(
                 Curve, 0, 
                 handle,
                 Flip.No);
-
-            this.layout.add(r);
         } else if (event.code === "ArrowRight") {
-            const r = new Rail(
+            r = new Rail(
                 Curve, 0, 
                 handle,
                 Flip.Yes);
-
-            this.layout.add(r);
         } else if (event.code === "KeyW") {
-            const r = new Rail(
+            r = new Rail(
                 Slope, 0, 
                 handle,
                 Flip.No);
-
-            this.layout.add(r);
         } else if (event.code === "KeyS") {
-            const r = new Rail(
+            r = new Rail(
                 Slope, 0, 
                 handle,
                 Flip.Yes);
-
-            this.layout.add(r);
+        } else if (event.code === "KeyL") {
+            r = new Rail(
+                Turnout, 0, 
+                handle,
+                Flip.No);
+         } else if (event.code === "KeyR") {
+            r = new Rail(
+                Turnout, 0, 
+                handle,
+                Flip.Yes);
+        } else if (event.code === "Tab") {
+            event.stopPropagation();
+            event.preventDefault();
+            this.frontierManager.selectNext();
+            return;
         } else {
             return;
+        }
+
+        this.layout.add(r);
+
+        for (let e of r.ends()) {
+            this.frontierManager.addEnd(e);
         }
 
         event.stopPropagation();
@@ -216,6 +238,9 @@ export class RailView implements LayoutObserver {
             m.addToScene(this.scene);   
         } else if (rail.factory === Slope) {
             const m = new SlopeModel(rail);
+            m.addToScene(this.scene);
+        } else if (rail.factory === Turnout) {
+            const m = new TurnoutModel(rail);
             m.addToScene(this.scene);
         }
     }

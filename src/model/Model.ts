@@ -48,6 +48,11 @@ export class Model {
     }
 
     public addToScene(scene: THREE.Scene) {
+        let mat = new THREE.MeshBasicMaterial();
+        let geo = new THREE.SphereGeometry(10, 8, 8);
+        let msh = new THREE.Mesh(geo, mat);
+        msh.position.copy(Model.pointToVec3(this.rail.ends()[0].point));
+        scene.add(msh);
         this.models.forEach(m =>
             scene.add(m)
         );
@@ -75,6 +80,17 @@ export class CurveModel extends Model {
 export class SlopeModel extends Model {
     constructor(rail: Rail) {
         super([ModelManager.create('slope')], rail);
+    }
+}
+export class TurnoutModel extends Model {
+    constructor(rail: Rail) {
+        var models = []
+        if (rail.instance.origin.pole.isPlus()) {
+            models = ['turnout_L_a', 'turnout_L_b', 'turnout_L_ab']
+        } else {
+            models = ['turnout_R_a', 'turnout_R_b', 'turnout_R_ab']
+        }
+        super(models.map(name => ModelManager.create(name)), rail);        
     }
 }
 
