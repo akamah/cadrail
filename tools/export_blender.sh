@@ -9,4 +9,4 @@ done
 
 #### then, archive the output .json files into one file
 
-python tools/archive_models.py build/assets/*.json >! build/models.json 
+python tools/archive_models.py build/assets/*.json > build/models.json 
