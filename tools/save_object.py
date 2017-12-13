@@ -1,3 +1,6 @@
+# usage: `blender $file --background --python tools/save_object.py`
+# do not execute it directly
+
 import os
 
 import bpy
