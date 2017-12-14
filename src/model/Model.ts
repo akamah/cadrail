@@ -94,4 +94,8 @@ export class TurnoutModel extends Model {
     }
 }
 
-
+export class PierModel extends Model {
+    constructor(rail: Rail) {
+        super([ModelManager.create('slope')], rail);
+    }
+}
