@@ -73,12 +73,19 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
     }
 
     private initFloor() {
-        var geometry = new THREE.PlaneBufferGeometry(10000, 10000);
-        var material = new THREE.MeshBasicMaterial( {color: 0x33FF33 } );
-        var plane = new THREE.Mesh( geometry, material );
-        plane.rotateX(-Math.PI / 2);
-        plane.position.setY(-4);
-        this.scene.add( plane );
+        let loader = new THREE.TextureLoader();
+
+        loader.load('./assets/grass.png', texture => {
+            var geometry = new THREE.PlaneBufferGeometry(10000, 10000);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(10, 10);
+            var material = new THREE.MeshBasicMaterial( {map: texture } );
+            var plane = new THREE.Mesh( geometry, material );
+            plane.rotateX(-Math.PI / 2);
+            plane.position.setY(-4);
+            this.scene.add( plane );
+        });
     }
 
     private initFrontier() {
@@ -92,7 +99,7 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
 
     private initScene() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xFFFFFF);
+        this.scene.background = new THREE.Color(0x88DDFF);
             
         const light = new THREE.DirectionalLight(0xFFFFFF);
         light.position.set(200, 400, -100);
