@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Rail, Point, End } from 'librail';
+import { Rail, Point, End, Pier } from 'librail';
 import { ModelManager } from './ModelManager';
 
 // 生のオブジェクトをビューが扱う代わりに
@@ -9,13 +9,8 @@ import { ModelManager } from './ModelManager';
 // こいつは糊をやっていく
 // * ビューの要求でシーンにオブジェクトを追加・削除する
 // * 
-export class Model {
-    public constructor(private models: THREE.Mesh[], private rail: Rail) {
-        models.forEach(m =>
-            this.setupMeshWithRail(m, rail)
-        );
-    }
 
+export class Model {
     // temporary, move to other module
     public static pointToVec3(p: Point): THREE.Vector3 {
         const d = 60;
@@ -33,13 +28,26 @@ export class Model {
         return new THREE.Vector3(x, z, -y);
     }
 
-    protected setupMeshWithRail(mesh: THREE.Mesh, rail: Rail) {
+    protected setupMesh(mesh: THREE.Mesh, origin: End) {
         // set position
-        mesh.position.copy(Model.pointToVec3(rail.instance.origin.point));
+        mesh.position.copy(Model.pointToVec3(origin.point));
 
         // rotate along Y-axis 
-        let rad = Math.PI / 4 * rail.instance.origin.dir.dir;
+        let rad = Math.PI / 4 * origin.dir.dir;
         mesh.rotateY(rad);
+    }
+}
+
+export class RailModel extends Model {
+    public constructor(private models: THREE.Mesh[], private rail: Rail) {
+        super();
+        models.forEach(m =>
+            this.setupMeshWithRail(m, rail)
+        );
+    }
+
+    protected setupMeshWithRail(mesh: THREE.Mesh, rail: Rail) {
+        super.setupMesh(mesh, rail.instance.origin);
 
         // rotate along X-axis if the rail is flipped
         if (rail.instance.flip.isYes()) {
@@ -63,26 +71,25 @@ export class Model {
             scene.remove(m)
         );
     }
-
 }
 
-export class StraightModel extends Model {
+export class StraightModel extends RailModel {
     constructor(rail: Rail) {
         super([ModelManager.create('straight_1')], rail);
     }
 }
 
-export class CurveModel extends Model {
+export class CurveModel extends RailModel {
     constructor(rail: Rail) {
         super([ModelManager.create('curve_8')], rail);
     }
 }
-export class SlopeModel extends Model {
+export class SlopeModel extends RailModel {
     constructor(rail: Rail) {
         super([ModelManager.create('slope')], rail);
     }
 }
-export class TurnoutModel extends Model {
+export class TurnoutModel extends RailModel {
     constructor(rail: Rail) {
         var models = []
         if (rail.instance.origin.pole.isPlus()) {
@@ -93,9 +100,17 @@ export class TurnoutModel extends Model {
         super(models.map(name => ModelManager.create(name)), rail);        
     }
 }
-
+/*
 export class PierModel extends Model {
-    constructor(rail: Rail) {
-        super([ModelManager.create('slope')], rail);
+    public constructor(private pier: Pier) {
+        super();
+        models.forEach(m =>
+            this.setupMeshWithRail(m, rail)
+        );
+    }
+
+    constructor(rail: Pier) {
+        super([ModelManager.create('pier_4')], rail);
     }
 }
+*/
