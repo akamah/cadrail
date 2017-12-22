@@ -8,7 +8,7 @@
     "dependencies": {
         "@types/three": "^0.84.35",
         "librail": "../librail",
-        "three": "^0.86.0",
+        "three": "^0.89.0",
         "typescript": "^2.6.2"
     },
     "devDependencies": {
