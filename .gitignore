@@ -157,4 +157,6 @@ package-lock.json
 
 # My settings
 
-build/
+build/*
+!build/bundle.js
+
