@@ -3,7 +3,8 @@
     "version": "0.1.0",
     "license": "MIT",
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+        "server": "webpack-dev-server"
     },
     "dependencies": {
         "@types/three": "^0.84.35",
