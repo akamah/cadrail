@@ -16,8 +16,8 @@ import { FrontierManager, FrontierManagerObserver } from './rail/FrontierManager
 
 
 export class RailView implements LayoutObserver, FrontierManagerObserver  {
-    readonly WIDTH = 1600;
-    readonly HEIGHT= 900;
+    readonly WIDTH = 1024;
+    readonly HEIGHT= 576;
 
     private renderer: THREE.WebGLRenderer;
     private scene:    THREE.Scene;
