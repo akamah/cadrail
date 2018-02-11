@@ -10,6 +10,7 @@
         "@types/three": "^0.84.35",
         "librail": "../librail",
         "three": "^0.89.0",
+        "ts-option": "^1.1.4",
         "typescript": "^2.6.2"
     },
     "devDependencies": {
