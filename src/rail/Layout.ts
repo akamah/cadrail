@@ -1,3 +1,4 @@
+import { Option, some, none } from "ts-option";
 import { Dir, End, Point, Pole, Rot, Rail, Pier, MiniPier } from 'librail';
 
 
@@ -32,7 +33,6 @@ export class Layout {
     }
 
     private notifyAddRail(rail: Rail) {
-//        this.openEnds_.forEach((e, i) => console.log("%d, %s", i, this.openEnds_[i].toString()), this)
         this.observer.railAdded(this, rail);
     }
 
@@ -46,7 +46,20 @@ export class Layout {
     }
 
     public remove(rail: Rail) {
-        this.notifyRemoveRail(rail);
         this.rails.delete(rail);
+        this.notifyRemoveRail(rail);
+    }
+
+    public lookupRailForEnd(target: End): Option<Rail> {
+        // 現在は非効率だが，線形に探索することにする．
+        for (let rail of this.rails_) {
+            for (let end of rail.ends()) {
+                if (end.equal(target)) {
+                    return some(rail);
+                }
+            }
+        }
+
+        return none;
     }
 }

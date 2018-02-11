@@ -11,7 +11,7 @@ interface OutlineEffectParameters {
 import { End, Pole, Point, Dir, Rot, Rail, Straight, Curve, Flip, Slope, Turnout } from 'librail';
 import { Layout, LayoutObserver } from './rail/Layout';
 import { ModelManager } from './model/ModelManager';
-import { Model, StraightModel, CurveModel, SlopeModel, TurnoutModel } from './model/Model';
+import { Model, RailModel, StraightModel, CurveModel, SlopeModel, TurnoutModel } from './model/Model';
 import { FrontierManager, FrontierManagerObserver } from './rail/FrontierManager';
 
 
@@ -27,6 +27,7 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
     private layout: Layout;
     private frontierManager: FrontierManager;
 
+    private models: {[index: string]: RailModel} = {};
     private frontier: THREE.Mesh;
 
     constructor() {
@@ -188,6 +189,12 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
                 Curve, 0, 
                 handle,
                 Flip.Yes);
+        } else if (event.code === "ArrowDown") {
+            let optRail = this.layout.lookupRailForEnd(this.frontierManager.selection);
+            optRail.forEach(rail => {
+                this.layout.remove(rail);
+            });
+            return;
         } else if (event.code === "KeyW") {
             r = new Rail(
                 Slope, 0, 
@@ -219,10 +226,6 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
 
         this.layout.add(r);
 
-        for (let e of r.ends()) {
-            this.frontierManager.addEnd(e);
-        }
-
         event.stopPropagation();
         event.preventDefault();
     }
@@ -239,20 +242,38 @@ export class RailView implements LayoutObserver, FrontierManagerObserver  {
     public railAdded(layout: Layout, rail: Rail) {
         if (rail.factory === Straight) {
             const m = new StraightModel(rail);
-            m.addToScene(this.scene);   
+            m.addToScene(this.scene);
+            this.models[rail.toString()] = m;
         } else if (rail.factory === Curve) { // STUB!!!
             const m = new CurveModel(rail);
             m.addToScene(this.scene);   
+            this.models[rail.toString()] = m;
         } else if (rail.factory === Slope) {
             const m = new SlopeModel(rail);
             m.addToScene(this.scene);
+            this.models[rail.toString()] = m;
         } else if (rail.factory === Turnout) {
             const m = new TurnoutModel(rail);
             m.addToScene(this.scene);
+            this.models[rail.toString()] = m;
+        }
+
+        for (let e of rail.ends()) {
+            this.frontierManager.addEnd(e);
         }
     }
 
     public railRemoved(layout: Layout, rail: Rail) {
+        let m = this.models[rail.toString()];
+
+        if (m) {
+            m.removeFromScene(this.scene);
+            delete this.models[rail.toString()];
+
+            for (let e of rail.ends()) {
+                this.frontierManager.removeEnd(e);
+            }
+        }
     }
 }
 
