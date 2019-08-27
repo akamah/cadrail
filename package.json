@@ -4,20 +4,21 @@
     "license": "MIT",
     "scripts": {
         "build": "webpack",
-        "server": "webpack-dev-server"
+        "watch": "webpack -w"
     },
     "dependencies": {
         "@types/three": "^0.84.35",
         "librail": "../librail",
-        "three": "^0.89.0",
-        "ts-option": "^1.1.4",
-        "typescript": "^2.6.2"
+        "three": "^0.89.0"
     },
     "devDependencies": {
         "@types/node": "^8.0.58",
         "imports-loader": "^0.7.1",
-        "ts-loader": "^2.3.7",
-        "webpack": "^3.10.0",
-        "webpack-dev-server": ">=3.1.11"
+        "ts-loader": "^6.0.4",
+        "ts-option": "^2.0.0",
+        "typescript": "^2.9.2",
+        "webpack": "^4.39.2",
+        "webpack-cli": "^3.3.7",
+        "webpack-dev-server": "^3.8.0"
     }
 }
