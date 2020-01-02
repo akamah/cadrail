@@ -2,25 +2,24 @@
 # do not execute it directly
 
 import os
-
 import bpy
-
-import io_three
-from io_three import constants
-from io_three import exporter
-
 
 SAVE_DIR = "./build/assets"
 
-# load default options
-options = constants.EXPORT_OPTIONS
+name = bpy.data.objects[0].name
+dst_path = os.path.join(SAVE_DIR, name + ".obj")
 
-# only export specific object
-options[constants.GEOMETRY_TYPE] = constants.GEOMETRY
+bpy.ops.export_scene.obj(
+    filepath=dst_path,
+    filter_glob="*.obj",
+    check_existing=False,
+    use_selection=False,
+    use_mesh_modifiers=True,
+    use_normals=True,
+    use_uvs=False,
+    use_materials=False,
+    use_triangles=True,
+    axis_forward='-Z',
+    axis_up='Y'
+)
 
-for object in bpy.data.objects:
-    exporter.export_geometry(
-        os.path.join(SAVE_DIR, object.name + constants.EXTENSION),
-        options, object
-    )
-    print(">>> {}".format(object.name))
